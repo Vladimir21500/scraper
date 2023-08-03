@@ -23,6 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json(content);
   } catch (error) {
+    console.error("ERROR", error);
     return res.status(500).json({ error: "Error parsing likes, location, comments" });
   }
 };
