@@ -7,7 +7,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(url);
 
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: "new",
+    });
     const page = await browser.newPage();
     await page.goto(url);
 
