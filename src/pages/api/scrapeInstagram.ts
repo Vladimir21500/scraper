@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const url = req.query.url as string;
@@ -8,7 +9,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: "new",
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+      defaultViewport: chromium.defaultViewport,
+      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
     });
     const page = await browser.newPage();
     await page.goto(url);
@@ -18,8 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const content = await page.$eval("main span a span", (el) => el.textContent);
 
     console.log("main span a span", content);
-
-    await browser.close();
 
     return res.status(200).json(content);
   } catch (error) {
